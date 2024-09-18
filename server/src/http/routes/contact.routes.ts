@@ -3,6 +3,7 @@ import { createNewContact } from "../../functions/create-new-contact";
 import z from "zod";
 import { deleteUserContact } from "../../functions/delete-user-contact";
 import { updateUserContact } from "../../functions/update-user-contact";
+import { listUserContacts } from "../../functions/list-user-contacts";
 
 const newContactBodySchema = z.object({
     name: z.string(),
@@ -24,6 +25,12 @@ const updateContactBodySchema = z.object({
     email: z.string().email("Email inválido"),
     phone: z.string(),
     cpf: z.coerce.string(),
+});
+
+const userContactsQuerySchema = z.object({
+    limit: z.coerce.number().default(10),
+    page: z.coerce.number().default(1),
+    searchName: z.string().default(""),
 });
 
 export async function contactRoutes(app: FastifyInstance) {
@@ -72,5 +79,20 @@ export async function contactRoutes(app: FastifyInstance) {
         });
 
         reply.status(204);
+    });
+
+    app.get("/contact", async (request, reply) => {
+        const userId = request.user.sub;
+        const { limit, page, searchName } = userContactsQuerySchema.parse(
+            request.query
+        );
+        const contacts = await listUserContacts({
+            userId: userId,
+            limit,
+            page,
+            searchName,
+        });
+
+        return reply.status(200).send({ contacts });
     });
 }
