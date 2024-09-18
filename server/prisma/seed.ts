@@ -1,27 +1,32 @@
 import { prisma } from "../src/libs/prisma";
 import { createFakeUser } from "../src/utils/create-fake-user";
 import { createdFakeCpf } from "../src/utils/create-fake-cpf";
+import { hashPassword } from "../src/utils/hash-password";
 
 const defaultCpf = "52998224725";
+const defaultPassword = "123456";
 
 async function createUsers(numberOfUser = 5) {
     const usersPrismaRequestArray = Array.from({ length: numberOfUser }, () => {
         const user = createFakeUser();
         const cpf = createdFakeCpf();
+        const hashedPassword = hashPassword(defaultPassword);
         return prisma.user.create({
             data: {
                 name: user.name,
                 email: user.email,
-                password: "123456",
+                password: hashedPassword,
                 cpf: cpf.digitsOnly,
             },
         });
     });
+
+    const defaultUserHashedPassword = hashPassword(defaultPassword);
     const defaultUserRequest = await prisma.user.create({
         data: {
             name: "admin",
             email: "admin@admin",
-            password: "123456",
+            password: defaultUserHashedPassword,
             cpf: defaultCpf,
         },
     });
