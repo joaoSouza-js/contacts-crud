@@ -17,8 +17,14 @@ const signUpSchema = z.object({
 export async function authRoutes(app: FastifyInstance) {
     app.post("/signin", async (request, reply) => {
         const { cpf, password } = sigInSchema.parse(request.body);
-        await confirmUserCredentials({ cpf, password });
-        const token = app.jwt.sign({ cpf }, { expiresIn: 60 * 60 * 2 }); // 2 hours
+        const { cpfCleaned, name } = await confirmUserCredentials({
+            cpf,
+            password,
+        });
+        const token = app.jwt.sign(
+            { cpf: cpfCleaned, name },
+            { sub: cpf, expiresIn: 60 * 60 * 2 }
+        ); // 2 hours
         reply.status(201).send({ token });
     });
 

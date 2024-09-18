@@ -36,4 +36,9 @@ export async function confirmUserCredentials(
     if (!isValidPassword) {
         throw new BadRequest("credenciais inválidas");
     }
+
+    return {
+        cpfCleaned: cleanedCPF,
+        name: userAlreadyExits.name,
+    };
 }

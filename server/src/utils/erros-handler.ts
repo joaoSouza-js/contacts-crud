@@ -1,6 +1,9 @@
 import type { FastifyInstance } from "fastify";
 import { ZodError } from "zod";
 import { BadRequest } from "../.error/BadRequest";
+import { AuthErrorRequest } from "../.error/AuthRequest";
+import { FastifyJWT } from "@fastify/jwt";
+
 type FastifyErrorHandler = FastifyInstance["errorHandler"];
 
 export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
@@ -20,5 +23,12 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
             message: error.message,
         });
     }
+
+    const IsFastifyJwtError = error instanceof AuthErrorRequest;
+
+    if (IsFastifyJwtError) {
+        return error.callError();
+    }
+
     return reply.status(500).send({ message: "Internal server error" });
 };
