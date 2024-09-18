@@ -17,7 +17,7 @@ export async function createAccount(props: CreateAccountProps) {
         throw new BadRequest("Cpf inválido");
     }
 
-    const userAlreadyExits = await prisma.user.findUnique({
+    const userAlreadyExits = await prisma.user.findFirst({
         where: {
             cpf: cleanedCPF,
         },

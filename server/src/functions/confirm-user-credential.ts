@@ -18,7 +18,7 @@ export async function confirmUserCredentials(
         throw new BadRequest("Cpf inválido");
     }
 
-    const userAlreadyExits = await prisma.user.findUnique({
+    const userAlreadyExits = await prisma.user.findFirst({
         where: {
             cpf: cleanedCPF,
         },
@@ -38,7 +38,7 @@ export async function confirmUserCredentials(
     }
 
     return {
-        cpfCleaned: cleanedCPF,
+        id: userAlreadyExits.id,
         name: userAlreadyExits.name,
     };
 }

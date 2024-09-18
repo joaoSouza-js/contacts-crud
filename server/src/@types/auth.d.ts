@@ -3,7 +3,7 @@ import "@fastify/jwt";
 declare module "@fastify/jwt" {
     export interface FastifyJWT {
         user: {
-            cpf: string;
+            sub: string;
             name: string;
         };
     }

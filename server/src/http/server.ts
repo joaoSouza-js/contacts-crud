@@ -4,7 +4,7 @@ import { errorHandler } from "../utils/erros-handler";
 import { routes } from "./routes";
 import fastifyJwt from "@fastify/jwt";
 
-const app = fastify();
+const app = fastify({ logger: true });
 
 app.setErrorHandler(errorHandler);
 app.register(fastifyJwt, {
