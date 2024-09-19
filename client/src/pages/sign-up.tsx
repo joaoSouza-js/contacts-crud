@@ -2,35 +2,53 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { useSignUpForm } from "@/hooks/pages/sign-up/use-sign-up-form";
 import { useSignInForm } from "@/hooks/pages/use-signin-form";
 import { usePasswordVisibility } from "@/hooks/use-password-visibility";
 
-export function SignIn() {
+export function SignUp() {
     const {
         registerWithMask,
-        handleSignIn,
+        handleSignUp,
         errors,
         handleSubmit,
         register,
         isSubmitting,
-    } = useSignInForm();
+    } = useSignUpForm();
 
     const { changePasswordVisibility, passwordIsVisible } =
         usePasswordVisibility();
 
     return (
-        <div className="h-screen min-h-screen justify-center items-center flex flex-col">
-            <form className="p-4" onSubmit={handleSubmit(handleSignIn)}>
+        <div className="min-h-screen justify-center items-center flex flex-col">
+            <form className="p-4" onSubmit={handleSubmit(handleSignUp)}>
                 <Card className="p-6 min-w-96 flex flex-col ">
                     <h1 className="text-xl font-bold ">Quick Contact</h1>
                     <div className="flex flex-col gap-3 mt-6">
-                        <label htmlFor="sign-in-cpf">
+                        <label htmlFor="sing-up-name">
+                            <span className="text-xs text-violet-500 font-bold">
+                                Nome
+                            </span>
+                            <Input
+                                className="mt-1"
+                                id={"sing-up-name"}
+                                type="text"
+                                {...register("name")}
+                                placeholder="Digite o seu nome"
+                            />
+                            {errors.name && (
+                                <span className="text-xs mt-1 text-red-500 font-bold">
+                                    {errors.name.message}
+                                </span>
+                            )}
+                        </label>
+                        <label htmlFor="sing-up-cpf">
                             <span className="text-xs text-violet-500 font-bold">
                                 CPF
                             </span>
                             <Input
                                 className="mt-1"
-                                id={"sign-in-cpf"}
+                                id={"sing-up-cpf"}
                                 placeholder="Digite o seu cpf"
                                 {...registerWithMask("cpf", ["999.999.999-99"])}
                             />
@@ -41,7 +59,7 @@ export function SignIn() {
                             )}
                         </label>
 
-                        <label htmlFor="sign-in-password">
+                        <label htmlFor="sign-up-password">
                             <span className="text-xs text-violet-500 font-bold">
                                 SENHA
                             </span>
@@ -49,7 +67,7 @@ export function SignIn() {
                             <PasswordInput
                                 className="mt-1"
                                 type="password"
-                                id="sign-in-password"
+                                id="sign-up-password"
                                 placeholder="Sua senha"
                                 isVisible={passwordIsVisible}
                                 changePasswordVisibility={
@@ -63,6 +81,29 @@ export function SignIn() {
                                 </span>
                             )}
                         </label>
+
+                        <label htmlFor="sign-up-confirm-password">
+                            <span className="text-xs text-violet-500 font-bold">
+                                CONFIRMAR SENHA
+                            </span>
+
+                            <PasswordInput
+                                className="mt-1"
+                                type="password"
+                                id="sign-up-confirm-password"
+                                placeholder="Confirme sua senha"
+                                isVisible={passwordIsVisible}
+                                changePasswordVisibility={
+                                    changePasswordVisibility
+                                }
+                                {...register("confirmPassword")}
+                            />
+                            {errors.confirmPassword && (
+                                <span className="text-xs mt-1 text-red-500 font-bold">
+                                    {errors.confirmPassword.message}
+                                </span>
+                            )}
+                        </label>
                     </div>
                     <div className="mt-5 flex flex-col  ">
                         <Button
@@ -70,17 +111,7 @@ export function SignIn() {
                             type="submit"
                             className="w-full"
                         >
-                            Entrar{" "}
-                        </Button>
-                        <span className="underline text-center block my-2">
-                            ou
-                        </span>
-                        <Button
-                            type="button"
-                            variant="link"
-                            className="w-full "
-                        >
-                            se cadastrar
+                            Casdastrar-se
                         </Button>
                     </div>
                 </Card>
