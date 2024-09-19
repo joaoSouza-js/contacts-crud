@@ -15,17 +15,17 @@ const signUpBodySchema = z.object({
 });
 
 export async function authRoutes(app: FastifyInstance) {
-    app.post("/signin", async (request, reply) => {
+    app.post("/sign-in", async (request, reply) => {
         const { cpf, password } = sigInBodySchema.parse(request.body);
-        const { id, name } = await confirmUserCredentials({
+        const { user } = await confirmUserCredentials({
             cpf,
             password,
         });
         const token = app.jwt.sign(
-            { name },
-            { sub: id, expiresIn: 60 * 60 * 2 }
+            { name: user.name },
+            { sub: user.id, expiresIn: 60 * 60 * 2 }
         ); // 2 hours
-        reply.status(201).send({ token });
+        reply.status(201).send({ token, user });
     });
 
     app.post("/signup", async (request, reply) => {

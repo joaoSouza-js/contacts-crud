@@ -37,8 +37,11 @@ export async function confirmUserCredentials(
         throw new BadRequest("credenciais inválidas");
     }
 
-    return {
+    const user = {
         id: userAlreadyExits.id,
         name: userAlreadyExits.name,
+    };
+    return {
+        user,
     };
 }
