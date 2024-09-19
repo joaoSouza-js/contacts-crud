@@ -1,10 +1,13 @@
 import { ErrorPage } from "@/components/page-error";
 import { RootLayout } from "@/components/root-layout";
+import { setAuthTokenInApiHeaders } from "@/http/set-token-in-api-headers";
 import { Home } from "@/pages/home";
 import { SignIn } from "@/pages/sign";
 import { SignUp } from "@/pages/sign-up";
+import { getAuthInLocalStorageToken } from "@/storage/auth-token";
+import { getUserInLocalStorage } from "@/storage/user";
 
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 
 export const router = createBrowserRouter([
     {
@@ -16,6 +19,15 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 element: <Home />,
+                loader: () => {
+                    const token = getAuthInLocalStorageToken();
+                    if (!token) {
+                        return redirect("/sign-in");
+                    }
+                    setAuthTokenInApiHeaders(token);
+
+                    return null;
+                },
             },
             {
                 path: "sign-in",

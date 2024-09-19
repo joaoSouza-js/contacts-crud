@@ -4,6 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/hooks/use-auth";
 import { errorToastHandler } from "@/_error/errorToastHandler";
+import { redirect, useNavigate, useNavigation } from "react-router-dom";
 
 const signUpFormSchema = z
     .object({
@@ -40,6 +41,8 @@ export function useSignUpForm() {
     const registerWithMask = useHookFormMask(register);
     const { signUp, signIn } = useAuth();
 
+    const navigate = useNavigate();
+
     async function handleSignUp(data: SignUpFormData) {
         try {
             await signUp({
@@ -52,6 +55,8 @@ export function useSignUpForm() {
                 cpf: data.cpf,
                 password: data.password,
             });
+
+            navigate("/");
         } catch (error) {
             errorToastHandler({ error });
         }
