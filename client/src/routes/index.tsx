@@ -5,7 +5,6 @@ import { Home } from "@/pages/home";
 import { SignIn } from "@/pages/sign";
 import { SignUp } from "@/pages/sign-up";
 import { getAuthInLocalStorageToken } from "@/storage/auth-token";
-import { getUserInLocalStorage } from "@/storage/user";
 
 import { createBrowserRouter, redirect } from "react-router-dom";
 
