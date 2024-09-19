@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useSignInForm } from "@/hooks/pages/use-signin-form";
 import { usePasswordVisibility } from "@/hooks/use-password-visibility";
+import { Link } from "react-router-dom";
 
 export function SignIn() {
     const {
@@ -75,13 +76,13 @@ export function SignIn() {
                         <span className="underline text-center block my-2">
                             ou
                         </span>
-                        <Button
-                            type="button"
-                            variant="link"
-                            className="w-full "
+
+                        <Link
+                            className="text-primary w-full text-center hover:underline"
+                            to={"/sign-up"}
                         >
                             se cadastrar
-                        </Button>
+                        </Link>
                     </div>
                 </Card>
             </form>
