@@ -4,18 +4,21 @@ import { formatCPF } from "@/utils/format-cpf";
 import ContactCardHeader from "./ui/contact-card-header";
 type contactCardProps = {
     contact: CONTACT_DTO;
+    openEditContactModal: (contact: CONTACT_DTO) => void;
     openDeleteContactModal: (contact: CONTACT_DTO) => void;
 };
 
 export default function ContactCard(props: contactCardProps) {
-    const { contact, openDeleteContactModal } = props;
+    const { contact, openDeleteContactModal, openEditContactModal } = props;
     const cpfFormatted = formatCPF(contact.cpf);
 
     function deleteContact() {
         openDeleteContactModal(contact);
     }
 
-    function editContact() {}
+    function editContact() {
+        openEditContactModal(contact);
+    }
 
     return (
         <Card className="rounded-xl px-5 py-5 shadow-md">

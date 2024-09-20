@@ -1,6 +1,7 @@
 import ContactCard from "@/components/contact-card";
 import { CreateContactModal } from "@/components/create-contact-modal";
 import { DeleteContactModal } from "@/components/delete-contact-modal";
+import { EditContactModal } from "@/components/edit-contact-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFetchContacts } from "@/hooks/pages/home/use-fetch-contacts";
@@ -16,6 +17,7 @@ export function Home() {
         null
     );
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
+    const [editModalVisibility, setEditModalVisibility] = useState(false);
 
     function changeDeleteModalVisibility(state: boolean) {
         setDeleteModalVisibility(state);
@@ -26,6 +28,15 @@ export function Home() {
     }
     function clearContactSelected() {
         setContactSelected(null);
+    }
+
+    function changeEditModalVisibility(state: boolean) {
+        setEditModalVisibility(state);
+    }
+
+    function openEditContactModal(contact: CONTACT_DTO) {
+        setContactSelected(contact);
+        setEditModalVisibility(true);
     }
 
     return (
@@ -89,6 +100,7 @@ export function Home() {
                     {contacts.map((contact) => (
                         <ContactCard
                             openDeleteContactModal={openDeleteContactModal}
+                            openEditContactModal={openEditContactModal}
                             key={contact.id}
                             contact={contact}
                         />
@@ -101,6 +113,13 @@ export function Home() {
                 contactId={contactSelected?.id ?? null}
                 contactName={contactSelected?.name ?? null}
                 modalVisibility={deleteModalVisibility}
+            />
+
+            <EditContactModal
+                changeModalVisibility={changeEditModalVisibility}
+                clearContactSelected={clearContactSelected}
+                contact={contactSelected}
+                modalVisibility={editModalVisibility}
             />
         </div>
     );
