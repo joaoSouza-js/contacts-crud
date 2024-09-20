@@ -10,7 +10,7 @@ export function ErrorPage() {
             className="flex flex-col gap-4 min-h-screen items-center justify-center"
         >
             <h1 className="text-3xl text-zinc-50 font-bold">
-                Foi mau Campeão (404) 🥹🥹🥹
+                Foi mal Campeão (404) 🥹🥹🥹
             </h1>
             <span className="text-xl text-zinc-50 font-bold">
                 Tente Recarregar á pagina
