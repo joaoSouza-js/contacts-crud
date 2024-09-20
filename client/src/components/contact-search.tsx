@@ -2,9 +2,10 @@ import { Input } from "@/components/ui/input";
 import type { ChangeEvent } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CreateContactModal } from "@/components/create-contact-modal";
-import { UserRoundPlusIcon } from "lucide-react";
+import { Search, UserRoundPlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDebouncedCallback } from "use-debounce";
+import { IconInput } from "./ui/icon-input";
 
 export function ContactSearch() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -38,7 +39,8 @@ export function ContactSearch() {
                 </span>
             </div>
             <div className="gap-6 flex w-full md:w-auto flex-col sm:flex-row">
-                <Input
+                <IconInput
+                    LeftIcon={<Search size={20} className="text-primary" />}
                     name="search"
                     defaultValue={search}
                     aria-label="Search Contacts"
