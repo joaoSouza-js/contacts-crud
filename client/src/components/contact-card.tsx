@@ -4,13 +4,16 @@ import { formatCPF } from "@/utils/format-cpf";
 import ContactCardHeader from "./ui/contact-card-header";
 type contactCardProps = {
     contact: CONTACT_DTO;
+    openDeleteContactModal: (contact: CONTACT_DTO) => void;
 };
 
 export default function ContactCard(props: contactCardProps) {
-    const { contact } = props;
+    const { contact, openDeleteContactModal } = props;
     const cpfFormatted = formatCPF(contact.cpf);
 
-    function deleteContact() {}
+    function deleteContact() {
+        openDeleteContactModal(contact);
+    }
 
     function editContact() {}
 

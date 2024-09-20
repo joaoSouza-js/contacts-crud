@@ -6,7 +6,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "./ui/dialog";
+} from "@/components/ui/dialog";
 import { Input } from "./ui/input";
 import { useCreateContactForm } from "@/hooks/pages/home/user-create-contact-form";
 

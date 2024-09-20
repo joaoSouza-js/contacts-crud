@@ -1,5 +1,6 @@
 import ContactCard from "@/components/contact-card";
 import { CreateContactModal } from "@/components/create-contact-modal";
+import { DeleteContactModal } from "@/components/delete-contact-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFetchContacts } from "@/hooks/pages/home/use-fetch-contacts";
@@ -11,6 +12,22 @@ export function Home() {
     const { contacts, isFetching, isFirstLoading } = useFetchContacts({
         searchName: contactInputSearch,
     });
+    const [contactSelected, setContactSelected] = useState<CONTACT_DTO | null>(
+        null
+    );
+    const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
+
+    function changeDeleteModalVisibility(state: boolean) {
+        setDeleteModalVisibility(state);
+    }
+    function openDeleteContactModal(contact: CONTACT_DTO) {
+        setContactSelected(contact);
+        setDeleteModalVisibility(true);
+    }
+    function clearContactSelected() {
+        setContactSelected(null);
+    }
+
     return (
         <div className="px-5 pb-6 mt-8">
             <strong className="text-3xl font-bold text-secondary  ">
@@ -70,10 +87,21 @@ export function Home() {
             {contacts.length > 0 && (
                 <main className="gap-6 mt-7 grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4 justify-center ">
                     {contacts.map((contact) => (
-                        <ContactCard key={contact.id} contact={contact} />
+                        <ContactCard
+                            openDeleteContactModal={openDeleteContactModal}
+                            key={contact.id}
+                            contact={contact}
+                        />
                     ))}
                 </main>
             )}
+            <DeleteContactModal
+                changeModalVisibility={changeDeleteModalVisibility}
+                clearContactId={clearContactSelected}
+                contactId={contactSelected?.id ?? null}
+                contactName={contactSelected?.name ?? null}
+                modalVisibility={deleteModalVisibility}
+            />
         </div>
     );
 }
