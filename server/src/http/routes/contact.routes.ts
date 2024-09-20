@@ -38,7 +38,7 @@ export async function contactRoutes(app: FastifyInstance) {
         const contact = newContactBodySchema.parse(request.body);
         const userId = request.user.sub;
 
-        const newContact = await createNewContact({
+        const { contactCreated } = await createNewContact({
             name: contact.name,
             email: contact.email,
             phone: contact.phone,
@@ -48,7 +48,7 @@ export async function contactRoutes(app: FastifyInstance) {
         });
 
         return reply.status(201).send({
-            newContact,
+            contact: contactCreated,
         });
     });
 

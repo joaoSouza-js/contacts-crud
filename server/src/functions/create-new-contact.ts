@@ -57,6 +57,13 @@ export async function createNewContact(props: createNewContactProps) {
             phone: phone,
             userId: userId,
         },
+        select: {
+            id: true,
+            cpf: true,
+            email: true,
+            name: true,
+            phone: true,
+        },
     });
 
     return {

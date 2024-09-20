@@ -19,6 +19,7 @@ export function errorToastHandler(props: errorToastHandlerProps) {
     toast({
         variant: "destructive",
         title: message,
+        ...toastConfig,
     });
 
     console.error(error);

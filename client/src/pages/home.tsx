@@ -1,4 +1,5 @@
 import ContactCard from "@/components/contact-card";
+import { CreateContactModal } from "@/components/create-contact-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFetchContacts } from "@/hooks/pages/home/use-fetch-contacts";
@@ -33,10 +34,12 @@ export function Home() {
                         value={contactInputSearch}
                         onChange={(e) => setContactInputSearch(e.target.value)}
                     />
-                    <Button className="flex gap-2" type="button">
-                        <UserRoundPlusIcon />
-                        Novo Contato
-                    </Button>
+                    <CreateContactModal>
+                        <Button className="flex gap-2" type="button">
+                            <UserRoundPlusIcon />
+                            Novo Contato
+                        </Button>
+                    </CreateContactModal>
                 </div>
             </section>
 
@@ -55,10 +58,12 @@ export function Home() {
                     <p className="text-secondary">
                         Você não tem nunhum contato com este nome
                     </p>
-                    <button className="text-secondary" type="button">
-                        {" "}
-                        adicionar um contato
-                    </button>
+                    <CreateContactModal>
+                        <button className="text-secondary" type="button">
+                            {" "}
+                            adicionar um contato
+                        </button>
+                    </CreateContactModal>
                 </div>
             )}
 
