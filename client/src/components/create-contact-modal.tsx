@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "./ui/input";
 import { useCreateContactForm } from "@/hooks/pages/home/user-create-contact-form";
+import { useInvalidateContactsQuery } from "@/services/react-query/user-invalidate-contacts-query";
 
 type createContactModalProps = {
     children: React.ReactNode;
@@ -16,9 +17,11 @@ type createContactModalProps = {
 export function CreateContactModal(props: createContactModalProps) {
     const { children } = props;
     const [dialogVisibility, setDialogVisibility] = useState(false);
+    const { invalidateContactsQuery } = useInvalidateContactsQuery();
 
     function closeCreateContactModal() {
         setDialogVisibility(false);
+        invalidateContactsQuery();
     }
 
     const {

@@ -5,11 +5,21 @@ import { EditContactModal } from "@/components/edit-contact-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFetchContacts } from "@/hooks/pages/home/use-fetch-contacts";
+import { useInvalidateContactsQuery } from "@/services/react-query/user-invalidate-contacts-query";
 import { UserRoundPlusIcon } from "lucide-react";
-import { useState } from "react";
+import { type ChangeEvent, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 export function Home() {
-    const [contactInputSearch, setContactInputSearch] = useState("");
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const [contactInputSearch, setContactInputSearch] = useState<string>(() => {
+        const search = searchParams.get("search");
+        return search || "";
+    });
+
+    const { invalidateContactsQuery } = useInvalidateContactsQuery();
+
     const { contacts, isFetching, isFirstLoading } = useFetchContacts({
         searchName: contactInputSearch,
     });
@@ -18,6 +28,8 @@ export function Home() {
     );
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
     const [editModalVisibility, setEditModalVisibility] = useState(false);
+
+    console.log(searchParams);
 
     function changeDeleteModalVisibility(state: boolean) {
         setDeleteModalVisibility(state);
@@ -28,6 +40,7 @@ export function Home() {
     }
     function clearContactSelected() {
         setContactSelected(null);
+        invalidateContactsQuery();
     }
 
     function changeEditModalVisibility(state: boolean) {
@@ -37,6 +50,26 @@ export function Home() {
     function openEditContactModal(contact: CONTACT_DTO) {
         setContactSelected(contact);
         setEditModalVisibility(true);
+    }
+
+    function changeSearchInputText(event: ChangeEvent<HTMLInputElement>) {
+        const text = event.target.value;
+        setContactInputSearch(text);
+
+        setSearchParams((state) => {
+            state.set("search", "text");
+            return state;
+        });
+
+        setSearchParams((state) => {
+            if (text === "") {
+                state.delete("search");
+            } else {
+                console.log("oi mundo");
+                state.set("search", text);
+            }
+            return state;
+        });
     }
 
     return (
@@ -60,7 +93,7 @@ export function Home() {
                         className=" sm:w-72 md:w-96"
                         placeholder="Pesquisar..."
                         value={contactInputSearch}
-                        onChange={(e) => setContactInputSearch(e.target.value)}
+                        onChange={changeSearchInputText}
                     />
                     <CreateContactModal>
                         <Button className="flex gap-2" type="button">

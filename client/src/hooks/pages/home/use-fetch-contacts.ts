@@ -1,5 +1,6 @@
 import { errorToastHandler } from "@/_error/errorToastHandler";
 import { listContactsHttpRequest } from "@/http/contact/list-contacts";
+import { reactQueryKeys } from "@/services/react-query";
 import { useQuery } from "@tanstack/react-query";
 
 type useFetchContactsProps = QUERY_BASE_PARAMS_DTO & {
@@ -22,7 +23,7 @@ export function useFetchContacts(props: useFetchContactsProps) {
         isFetching,
         isLoading: isFirstLoading,
     } = useQuery({
-        queryKey: ["contacts", limit, page, searchName],
+        queryKey: [reactQueryKeys.contacts, searchName],
         queryFn: fetchContacts,
     });
 
