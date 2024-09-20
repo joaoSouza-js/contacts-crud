@@ -1,7 +1,10 @@
 import ContactCard from "@/components/contact-card";
+import { ContactNotFoundContact } from "@/components/contact-not-found-contact";
+import { ContactSearch } from "@/components/contact-search";
 import { CreateContactModal } from "@/components/create-contact-modal";
 import { DeleteContactModal } from "@/components/delete-contact-modal";
 import { EditContactModal } from "@/components/edit-contact-modal";
+import { EmptyContacts } from "@/components/empty-contacts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFetchContacts } from "@/hooks/pages/home/use-fetch-contacts";
@@ -11,25 +14,22 @@ import { type ChangeEvent, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function Home() {
-    const [searchParams, setSearchParams] = useSearchParams();
-
-    const [contactInputSearch, setContactInputSearch] = useState<string>(() => {
-        const search = searchParams.get("search");
-        return search || "";
-    });
+    const [searchParams] = useSearchParams();
+    const contactInputSearch = searchParams.get("search") || "";
 
     const { invalidateContactsQuery } = useInvalidateContactsQuery();
 
-    const { contacts, isFetching, isFirstLoading } = useFetchContacts({
-        searchName: contactInputSearch,
-    });
+    const { contacts, isFetching, isFirstLoading } = useFetchContacts({});
     const [contactSelected, setContactSelected] = useState<CONTACT_DTO | null>(
         null
     );
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
     const [editModalVisibility, setEditModalVisibility] = useState(false);
 
-    console.log(searchParams);
+    const isEmptyContactsList =
+        contacts.length <= 0 && contactInputSearch.length < 1 && !isFetching;
+    const isContactNotFound =
+        contacts.length <= 0 && contactInputSearch.length >= 1 && !isFetching;
 
     function changeDeleteModalVisibility(state: boolean) {
         setDeleteModalVisibility(state);
@@ -52,81 +52,17 @@ export function Home() {
         setEditModalVisibility(true);
     }
 
-    function changeSearchInputText(event: ChangeEvent<HTMLInputElement>) {
-        const text = event.target.value;
-        setContactInputSearch(text);
-
-        setSearchParams((state) => {
-            state.set("search", "text");
-            return state;
-        });
-
-        setSearchParams((state) => {
-            if (text === "") {
-                state.delete("search");
-            } else {
-                console.log("oi mundo");
-                state.set("search", text);
-            }
-            return state;
-        });
-    }
-
     return (
         <div className="px-5 pb-6 mt-8">
             <strong className="text-3xl font-bold text-secondary  ">
                 Quick Contact
             </strong>
 
-            <section className="flex flex-col gap-3 mt-8 md:flex-row md:justify-between  items-center">
-                <div className="mx-auto md:mx-0">
-                    <h1 className="text-secondary text-center text-3xl font-bold md:text-left">
-                        Contatos
-                    </h1>
-                    <span className="text-secondary font-semibold text-lg block mt-1">
-                        Veja todos o seus contatos
-                    </span>
-                </div>
-                <div className="gap-6 flex  w-full  md:w-auto  flex-col sm:flex-row">
-                    <Input
-                        name="search"
-                        className=" sm:w-72 md:w-96"
-                        placeholder="Pesquisar..."
-                        value={contactInputSearch}
-                        onChange={changeSearchInputText}
-                    />
-                    <CreateContactModal>
-                        <Button className="flex gap-2" type="button">
-                            <UserRoundPlusIcon />
-                            Novo Contato
-                        </Button>
-                    </CreateContactModal>
-                </div>
-            </section>
+            <ContactSearch />
 
-            {contacts.length <= 0 && contactInputSearch.length <= 1 && (
-                <div className="mt-7 flex flex-col items-center justify-end">
-                    <p className="text-secondary">Nenhum contato encontrado.</p>
-                    <button className="text-secondary" type="button">
-                        {" "}
-                        adicionar um contato
-                    </button>
-                </div>
-            )}
+            {isEmptyContactsList && <EmptyContacts />}
 
-            {contacts.length <= 0 && contactInputSearch.length > 1 && (
-                <div className="mt-7 flex flex-col items-center justify-end">
-                    <p className="text-secondary">
-                        Você não tem nunhum contato com este nome
-                    </p>
-                    <CreateContactModal>
-                        <button className="text-secondary" type="button">
-                            {" "}
-                            adicionar um contato
-                        </button>
-                    </CreateContactModal>
-                </div>
-            )}
+            {isContactNotFound && <ContactNotFoundContact />}
 
             {contacts.length > 0 && (
                 <main className="gap-6 mt-7 grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4 justify-center ">

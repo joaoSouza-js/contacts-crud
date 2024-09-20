@@ -20,7 +20,10 @@ export function SignUp() {
 
     return (
         <div className="h-screen min-h-screen flex">
-            <form className="p-4 flex-1  justify-center items-center flex flex-col">
+            <form
+                onSubmit={handleSubmit(handleSignUp)}
+                className="p-4 flex-1  justify-center items-center flex flex-col"
+            >
                 <Card className="p-6 w-full max-w-sm flex flex-col">
                     <h1 className="text-xl font-bold ">Quick Contact</h1>
                     <div className="flex flex-col gap-3 mt-6">
