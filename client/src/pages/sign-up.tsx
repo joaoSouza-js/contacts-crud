@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useSignUpForm } from "@/hooks/pages/sign-up/use-sign-up-form";
-import { useSignInForm } from "@/hooks/pages/use-signin-form";
 import { usePasswordVisibility } from "@/hooks/use-password-visibility";
 
 export function SignUp() {
@@ -20,9 +19,9 @@ export function SignUp() {
         usePasswordVisibility();
 
     return (
-        <div className="min-h-screen justify-center items-center flex flex-col">
-            <form className="p-4" onSubmit={handleSubmit(handleSignUp)}>
-                <Card className="p-6 min-w-96 flex flex-col ">
+        <div className="h-screen min-h-screen flex">
+            <form className="p-4 flex-1  justify-center items-center flex flex-col">
+                <Card className="p-6 w-full max-w-sm flex flex-col">
                     <h1 className="text-xl font-bold ">Quick Contact</h1>
                     <div className="flex flex-col gap-3 mt-6">
                         <label htmlFor="sing-up-name">

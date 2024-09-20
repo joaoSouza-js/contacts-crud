@@ -22,6 +22,14 @@ export function listUserContacts(props: listUserContactsProps) {
         orderBy: {
             name: "asc",
         },
+        select: {
+            name: true,
+            cpf: true,
+            email: true,
+            id: true,
+            phone: true,
+            photoUrl: true,
+        },
         take: limit,
         skip: (page - 1) * limit,
     });
