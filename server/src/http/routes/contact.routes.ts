@@ -4,6 +4,8 @@ import z from "zod";
 import { deleteUserContact } from "../../functions/delete-user-contact";
 import { updateUserContact } from "../../functions/update-user-contact";
 import { listUserContacts } from "../../functions/list-user-contacts";
+import { saveContactImage } from "../../functions/save-contact-image";
+import { BadRequest } from "../../.error/BadRequest";
 
 const newContactBodySchema = z.object({
     name: z.string(),
@@ -31,6 +33,10 @@ const userContactsQuerySchema = z.object({
     limit: z.coerce.number().default(10),
     page: z.coerce.number().default(1),
     searchName: z.string().default(""),
+});
+
+const contactPhotoQueryParamsSchema = z.object({
+    contactId: z.string().uuid(),
 });
 
 export async function contactRoutes(app: FastifyInstance) {
@@ -94,5 +100,29 @@ export async function contactRoutes(app: FastifyInstance) {
         });
 
         return reply.status(200).send({ contacts });
+    });
+
+    app.patch("/contact/:contactId/photo", async (request, reply) => {
+        const { contactId } = contactPhotoQueryParamsSchema.parse(
+            request.params
+        );
+
+        const userId = request.user.sub;
+
+        const image = await request.file();
+
+        if (!image) {
+            throw new BadRequest("Imagem inválida");
+        }
+
+        const photoUrl = await saveContactImage({
+            contactId: contactId,
+            image,
+            userId: userId,
+        });
+
+        reply.send({
+            fileName: photoUrl,
+        });
     });
 }

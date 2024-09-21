@@ -1,16 +1,26 @@
 import fastify from "fastify";
 import cors from "@fastify/cors";
+import fastifyMultipart from "@fastify/multipart";
 import { errorHandler } from "../utils/erros-handler";
 import { routes } from "./routes";
 import fastifyJwt from "@fastify/jwt";
+import fastifyStatic from "@fastify/static";
+import path from "node:path";
 
 const app = fastify({ logger: true });
+
+const imagesFolder = path.join(__dirname, "../../uploads");
+app.register(fastifyStatic, {
+    root: imagesFolder, // Path to your uploads folder
+    prefix: "/uploads/",
+});
 
 app.setErrorHandler(errorHandler);
 app.register(fastifyJwt, {
     secret: String("secret"),
 });
 
+app.register(fastifyMultipart);
 app.register(cors, {
     origin: true,
 });
