@@ -2,6 +2,7 @@ import { prisma } from "../libs/prisma";
 import type { MultipartFile } from "@fastify/multipart";
 import { saveImage } from "../services/save-image";
 import { BadRequest } from "../.error/BadRequest";
+import { env } from "../env";
 
 type saveContactImageProps = {
     contactId: string;
@@ -36,7 +37,7 @@ export async function saveContactImage(props: saveContactImageProps) {
         );
     }
 
-    const photoUrl = `http://localhost:3000/uploads/${photoName}`; // Replace with your actual server URL
+    const photoUrl = `http://localhost:${env.PORT}/uploads/${photoName}`; // Replace with your actual server URL
 
     await prisma.contact.update({
         where: {

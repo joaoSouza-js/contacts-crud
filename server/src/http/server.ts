@@ -6,6 +6,7 @@ import { routes } from "./routes";
 import fastifyJwt from "@fastify/jwt";
 import fastifyStatic from "@fastify/static";
 import path from "node:path";
+import { env } from "../env";
 
 const app = fastify({ logger: true });
 
@@ -27,12 +28,12 @@ app.register(cors, {
 
 app.register(routes, { prefix: "/api" });
 app.listen({
-    port: 3000,
+    port: env.PORT,
 })
     .catch((err) => {
         console.error(err);
         process.exit(1);
     })
     .then(() => {
-        console.log("Server listening http://localhost:3000");
+        console.log(`Server listening http://localhost:${env.PORT}`);
     });
