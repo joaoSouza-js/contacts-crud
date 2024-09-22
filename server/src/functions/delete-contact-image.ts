@@ -1,4 +1,5 @@
 import { prisma } from "../libs/prisma";
+import { deleteImage } from "../services/delete-image";
 import { checkUserHasAuthorizationInContact } from "./check-user-has-authorization-in-contact";
 
 type deleteContactImage = {
@@ -16,7 +17,9 @@ export async function deleteContactImage(props: deleteContactImage) {
             "Apenas o proprietário do contato pode deletar a imagem",
     });
 
-    if (!contact.photoUrl) return;
+    if (contact.photoUrl == null) return;
+
+    const fileName = contact.photoUrl.split("/").pop();
 
     await Promise.all([
         prisma.contact.update({
@@ -27,13 +30,7 @@ export async function deleteContactImage(props: deleteContactImage) {
                 photoUrl: null,
             },
         }),
-        prisma.contact.update({
-            where: {
-                id: contactId,
-            },
-            data: {
-                photoUrl: null,
-            },
-        }),
+
+        deleteImage({ fileName }),
     ]);
 }
