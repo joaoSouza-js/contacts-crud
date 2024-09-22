@@ -1,16 +1,12 @@
 import ContactCard from "@/components/contact-card";
 import { ContactNotFoundContact } from "@/components/contact-not-found-contact";
 import { ContactSearch } from "@/components/contact-search";
-import { CreateContactModal } from "@/components/create-contact-modal";
 import { DeleteContactModal } from "@/components/delete-contact-modal";
 import { EditContactModal } from "@/components/edit-contact-modal";
 import { EmptyContacts } from "@/components/empty-contacts";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useFetchContacts } from "@/hooks/pages/home/use-fetch-contacts";
 import { useInvalidateContactsQuery } from "@/services/react-query/user-invalidate-contacts-query";
-import { UserRoundPlusIcon } from "lucide-react";
-import { type ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function Home() {

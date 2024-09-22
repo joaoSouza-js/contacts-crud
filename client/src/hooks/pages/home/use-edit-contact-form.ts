@@ -5,7 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { errorToastHandler } from "@/_error/errorToastHandler";
 import { successToastHandler } from "@/utils/successToast";
 import { editContactHttpRequest } from "@/http/contact/edit-contact ";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { updateContactImageHttpRequest } from "@/http/contact/update-contact-image";
+import { deleteContactImageHttpRequest } from "@/http/contact/delete-contact-image";
 
 const editContactSchema = z.object({
     cpf: z
@@ -14,6 +16,7 @@ const editContactSchema = z.object({
     name: z.string({ required_error: "Nome obrigatório" }),
     email: z.string({ required_error: "Email obrigatório" }),
     phone: z.string({ required_error: "Telefone obrigatório" }),
+    contactImageAvatar: z.custom<FileList>().optional(),
 });
 
 type editContactFormData = z.infer<typeof editContactSchema>;
@@ -29,12 +32,24 @@ export function useEditContactForm(props: useEditContactFormProps) {
     const editContactForm = useForm<editContactFormData>({
         resolver: zodResolver(editContactSchema),
     });
-
-    const { register, formState, handleSubmit, reset, setValue } =
+    const [contactInitialPhotoUrl, setContactInitialPhotoUrl] = useState<
+        string | null
+    >(null);
+    const { register, formState, handleSubmit, reset, setValue, watch } =
         editContactForm;
     const { errors, isSubmitting } = formState;
 
     const registerWithMask = useHookFormMask(register);
+
+    const contactImageAvatarObject = watch("contactImageAvatar");
+    const contactImageAvatarArray = Array.from(contactImageAvatarObject || []);
+    const contactImageAvatar = contactImageAvatarArray[0] ?? null;
+    const contactAvatarImageInformation = contactImageAvatar
+        ? {
+              name: contactImageAvatar.name,
+              photoUrl: URL.createObjectURL(contactImageAvatar),
+          }
+        : null;
 
     async function handleEditContact(data: editContactFormData) {
         try {
@@ -45,6 +60,24 @@ export function useEditContactForm(props: useEditContactFormProps) {
                 email: data.email,
                 phone: data.phone,
             });
+            const contactImageAvatarArray = Array.from(
+                contactImageAvatarObject || []
+            );
+
+            if (
+                (contactInitialPhotoUrl == null && contact.hasPhoto) ||
+                (contactImageAvatarArray[0] && contact.hasPhoto)
+            ) {
+                await deleteContactImageHttpRequest({ contactId: contact.id });
+            }
+
+            if (contactImageAvatarArray[0]) {
+                await updateContactImageHttpRequest({
+                    contactId: contact.id,
+                    file: contactImageAvatarArray[0],
+                });
+            }
+
             reset();
             if (successEditCallback) {
                 successEditCallback();
@@ -57,12 +90,21 @@ export function useEditContactForm(props: useEditContactFormProps) {
         }
     }
 
+    function deleteContactImage() {
+        if (contactInitialPhotoUrl) {
+            setContactInitialPhotoUrl(null);
+            return;
+        }
+        reset({ contactImageAvatar: null });
+    }
+
     useEffect(() => {
         if (!contact) return;
         setValue("name", contact.name);
         setValue("cpf", contact.cpf);
         setValue("email", contact.email);
         setValue("phone", contact.phone);
+        setContactInitialPhotoUrl(contact?.photoUrl);
     }, [contact, setValue]);
 
     return {
@@ -71,6 +113,9 @@ export function useEditContactForm(props: useEditContactFormProps) {
         registerWithMask,
         editContactForm,
         handleSubmit,
+        deleteContactImage,
+        contactInitialPhotoUrl,
+        contactAvatarImageInformation,
         errors,
         isSubmitting,
     };
