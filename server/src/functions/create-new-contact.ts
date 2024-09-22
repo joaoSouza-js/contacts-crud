@@ -46,7 +46,7 @@ export async function createNewContact(props: createNewContactProps) {
     }
 
     if (contactAlreadyExits?.id === userId) {
-        throw new BadRequest("Você não pode se  auto cadastrar");
+        throw new BadRequest("Você não pode se auto cadastrar");
     }
 
     const contactCreated = await prisma.contact.create({

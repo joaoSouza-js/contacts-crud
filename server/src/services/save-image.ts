@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { BadRequest } from "../.error/BadRequest";
 import { promises as fsPromises } from "node:fs";
+import { uploadsFolderPath } from "../utils/uploads-folder-path";
 
 type saveImageProps = {
     image: MultipartFile;
@@ -15,10 +16,9 @@ export async function saveImage(props: saveImageProps) {
     const fileName = `${uuid}${fileMimeType}`;
 
     try {
-        const uploadsDir = path.join(__dirname, "../../uploads");
-        const filePath = path.join(uploadsDir, fileName);
+        const filePath = path.join(uploadsFolderPath, fileName);
 
-        await fsPromises.mkdir(uploadsDir, { recursive: true });
+        await fsPromises.mkdir(uploadsFolderPath, { recursive: true });
 
         const fileData = await image.toBuffer();
 

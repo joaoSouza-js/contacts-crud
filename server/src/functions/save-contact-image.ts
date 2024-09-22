@@ -1,8 +1,8 @@
 import { prisma } from "../libs/prisma";
 import type { MultipartFile } from "@fastify/multipart";
 import { saveImage } from "../services/save-image";
-import { BadRequest } from "../.error/BadRequest";
 import { env } from "../env";
+import { checkUserHasAuthorizationInContact } from "./check-user-has-authorization-in-contact";
 
 type saveContactImageProps = {
     contactId: string;
@@ -16,26 +16,12 @@ export async function saveContactImage(props: saveContactImageProps) {
         image,
     });
 
-    const contact = await prisma.contact.findUnique({
-        where: {
-            id: contactId,
-        },
-        include: {
-            user: true,
-        },
+    await checkUserHasAuthorizationInContact({
+        contactId,
+        userId,
+        useNotAuthorizedMessageError:
+            "Apenas o proprietário do contato pode alterar a imagem",
     });
-
-    if (!contact) {
-        throw new BadRequest("Contato inexistente ou já foi deletado");
-    }
-
-    const isContactOwner = contact.user?.id === userId;
-
-    if (!isContactOwner) {
-        throw new BadRequest(
-            "Contato só pode ser atualizado pelo proprietário"
-        );
-    }
 
     const photoUrl = `http://localhost:${env.PORT}/uploads/${photoName}`; // Replace with your actual server URL
 

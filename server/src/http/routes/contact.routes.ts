@@ -1,11 +1,12 @@
+import z from "zod";
 import type { FastifyInstance } from "fastify";
 import { createNewContact } from "../../functions/create-new-contact";
-import z from "zod";
 import { deleteUserContact } from "../../functions/delete-user-contact";
 import { updateUserContact } from "../../functions/update-user-contact";
 import { listUserContacts } from "../../functions/list-user-contacts";
 import { saveContactImage } from "../../functions/save-contact-image";
 import { BadRequest } from "../../.error/BadRequest";
+import { deleteContactImage } from "../../functions/delete-contact-image";
 
 const newContactBodySchema = z.object({
     name: z.string(),
@@ -14,11 +15,7 @@ const newContactBodySchema = z.object({
     cpf: z.coerce.string(),
 });
 
-const deleteContactQueryParamsSchema = z.object({
-    contactId: z.string().uuid(),
-});
-
-const updateContactQueryParamsSchema = z.object({
+const contactQueryParamsSchema = z.object({
     contactId: z.string().uuid(),
 });
 
@@ -59,9 +56,7 @@ export async function contactRoutes(app: FastifyInstance) {
     });
 
     app.delete("/contact/:contactId", async (request, reply) => {
-        const { contactId } = deleteContactQueryParamsSchema.parse(
-            request.params
-        );
+        const { contactId } = contactQueryParamsSchema.parse(request.params);
         const userId = request.user.sub;
         await deleteUserContact({ contactId: contactId, userId: userId });
 
@@ -69,9 +64,7 @@ export async function contactRoutes(app: FastifyInstance) {
     });
 
     app.put("/contact/:contactId", async (request, reply) => {
-        const { contactId } = updateContactQueryParamsSchema.parse(
-            request.params
-        );
+        const { contactId } = contactQueryParamsSchema.parse(request.params);
 
         const contact = updateContactBodySchema.parse(request.body);
         const userId = request.user.sub;
@@ -124,5 +117,12 @@ export async function contactRoutes(app: FastifyInstance) {
         reply.send({
             fileName: photoUrl,
         });
+    });
+
+    app.delete("/contact/:contactId/photo", async (request, reply) => {
+        const { contactId } = contactQueryParamsSchema.parse(request.params);
+        const userId = request.user.sub;
+        await deleteContactImage({ contactId, userId });
+        reply.status(204);
     });
 }

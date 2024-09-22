@@ -5,20 +5,19 @@ import { errorHandler } from "../utils/erros-handler";
 import { routes } from "./routes";
 import fastifyJwt from "@fastify/jwt";
 import fastifyStatic from "@fastify/static";
-import path from "node:path";
 import { env } from "../env";
+import { uploadsFolderPath } from "../utils/uploads-folder-path";
 
 const app = fastify({ logger: true });
 
-const imagesFolder = path.join(__dirname, "../../uploads");
 app.register(fastifyStatic, {
-    root: imagesFolder, // Path to your uploads folder
+    root: uploadsFolderPath, // Path to your uploads folder
     prefix: "/uploads/",
 });
 
 app.setErrorHandler(errorHandler);
 app.register(fastifyJwt, {
-    secret: String("secret"),
+    secret: String(env.JWT_SECRET),
 });
 
 app.register(fastifyMultipart);

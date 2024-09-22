@@ -1,5 +1,5 @@
-import { BadRequest } from "../.error/BadRequest";
 import { prisma } from "../libs/prisma";
+import { checkUserHasAuthorizationInContact } from "./check-user-has-authorization-in-contact";
 
 type createNewContactProps = {
     contactId: string;
@@ -12,26 +12,12 @@ type createNewContactProps = {
 export async function updateUserContact(props: createNewContactProps) {
     const { name, email, phone, contactId, userId } = props;
 
-    const contact = await prisma.contact.findUnique({
-        where: {
-            id: contactId,
-        },
-        include: {
-            user: true,
-        },
+    await checkUserHasAuthorizationInContact({
+        contactId,
+        userId,
+        useNotAuthorizedMessageError:
+            "Apenas o proprietário do contato pode alterar os dados",
     });
-
-    if (!contact) {
-        throw new BadRequest("Contato inexistente ou já foi deletado");
-    }
-
-    const isContactOwner = contact.user?.id === userId;
-
-    if (!isContactOwner) {
-        throw new BadRequest(
-            "Contato só pode ser atualizado pelo proprietário"
-        );
-    }
 
     await prisma.contact.update({
         where: {
