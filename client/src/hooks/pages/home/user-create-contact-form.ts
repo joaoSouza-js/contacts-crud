@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { errorToastHandler } from "@/_error/errorToastHandler";
 import { createContactHttpRequest } from "@/http/contact/create-contact";
 import { successToastHandler } from "@/utils/successToast";
+import { updateContactImageHttpRequest } from "@/http/contact/update-contact-image";
 
 const createContactSchema = z.object({
     cpf: z
@@ -13,6 +14,7 @@ const createContactSchema = z.object({
     name: z.string({ required_error: "Nome obrigatório" }),
     email: z.string({ required_error: "Email obrigatório" }),
     phone: z.string({ required_error: "Telefone obrigatório" }),
+    contactImageAvatar: z.custom<FileList>().optional(),
 });
 
 type CreateContactFormData = z.infer<typeof createContactSchema>;
@@ -28,19 +30,41 @@ export function useCreateContactForm(props: useCreateContactFormProps) {
         resolver: zodResolver(createContactSchema),
     });
 
-    const { register, formState, handleSubmit, reset } = createContactForm;
+    const { register, formState, handleSubmit, reset, watch } =
+        createContactForm;
     const { errors, isSubmitting } = formState;
 
     const registerWithMask = useHookFormMask(register);
 
+    const contactImageAvatarObject = watch("contactImageAvatar");
+    const contactImageAvatarArray = Array.from(contactImageAvatarObject || []);
+    const contactImageAvatar = contactImageAvatarArray[0] ?? null;
+
+    const contactAvatarImageInformation = contactImageAvatar
+        ? {
+              name: contactImageAvatar.name,
+              photoUrl: URL.createObjectURL(contactImageAvatar),
+          }
+        : null;
+
     async function handleCreateContact(data: CreateContactFormData) {
         try {
-            await createContactHttpRequest({
+            const { contact } = await createContactHttpRequest({
                 name: data.name,
                 cpf: data.cpf,
                 email: data.email,
                 phone: data.phone,
             });
+            const contactImageAvatarArray = Array.from(
+                contactImageAvatarObject || []
+            );
+            if (contactImageAvatarArray[0]) {
+                await updateContactImageHttpRequest({
+                    contactId: contact.id,
+                    file: contactImageAvatarArray[0],
+                });
+            }
+
             reset();
             handleCloseForm();
             successToastHandler({
@@ -51,6 +75,10 @@ export function useCreateContactForm(props: useCreateContactFormProps) {
         }
     }
 
+    function deleteContactImage() {
+        reset({ contactImageAvatar: null });
+    }
+
     return {
         handleCreateContact,
         register,
@@ -58,6 +86,8 @@ export function useCreateContactForm(props: useCreateContactFormProps) {
         createContactForm,
         handleSubmit,
         errors,
+        deleteContactImage,
+        contactAvatarImageInformation,
         isSubmitting,
     };
 }
