@@ -85,7 +85,7 @@ export async function contactRoutes(app: FastifyInstance) {
         const { limit, page, searchName } = userContactsQuerySchema.parse(
             request.query
         );
-        const contacts = await listUserContacts({
+        const { contacts } = await listUserContacts({
             userId: userId,
             limit,
             page,

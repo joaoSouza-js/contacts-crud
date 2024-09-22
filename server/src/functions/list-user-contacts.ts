@@ -7,10 +7,10 @@ type listUserContactsProps = {
     page?: number;
 };
 
-export function listUserContacts(props: listUserContactsProps) {
+export async function listUserContacts(props: listUserContactsProps) {
     const { userId, searchName = "", limit = 10, page = 1 } = props;
 
-    const contacts = prisma.contact.findMany({
+    const contacts = await prisma.contact.findMany({
         where: {
             user: {
                 id: userId,
@@ -34,5 +34,12 @@ export function listUserContacts(props: listUserContactsProps) {
         skip: (page - 1) * limit,
     });
 
-    return contacts;
+    const contactFormatted = contacts.map((contact) => {
+        const contactHasPhoto = !!contact?.photoUrl;
+        return { ...contact, hasPhoto: contactHasPhoto };
+    });
+
+    return {
+        contacts: contactFormatted,
+    };
 }
