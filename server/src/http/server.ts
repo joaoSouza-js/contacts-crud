@@ -24,14 +24,13 @@ app.register(fastifySwagger, {
             title: "Contacts API",
             description: "API to manage contacts",
             version: "0.1.0",
+            contact: {
+                name: "João Souza",
+                email: "joaosouzabn.js@gmail.com",
+                url: "https://portifolio-lake-alpha.vercel.app/about",
+            },
         },
-        // securityDefinitions: {
-        //     Bearer: {
-        //         type: "apiKey",
-        //         name: "Bearer",
-        //         in: "header",
-        //     },
-        // },
+
         consumes: ["application/json"],
         produces: ["application/json"],
     },
