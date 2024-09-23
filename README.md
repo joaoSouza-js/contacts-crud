@@ -220,11 +220,11 @@ diponível em  [localhost](http://localhost:3000/docs)
    - O `DATABASE_URL` deve ser uma URL válida do PostgreSQL. Um exemplo de URL válida é:
 
    ```
-   postgres://user:password@localhost:5432/mydatabase
+   postgresql://user:password@localhost:5432/mydatabase
    ```
 
       Aqui está uma breve explicação sobre os componentes da URL:
-   - `postgres`: o tipo do banco de dados.
+   - `postgresql`: o tipo do banco de dados.
    - `user`: o nome de usuário para acessar o banco de dados.
    - `password`: a senha do usuário.
    - `localhost`: o endereço do servidor de banco de dados (neste caso, está rodando localmente).
