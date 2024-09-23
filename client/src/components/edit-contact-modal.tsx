@@ -42,6 +42,7 @@ export function EditContactModal(props: editContactModalProps) {
     } = useEditContactForm({
         contact: contact ?? null,
         successEditCallback: closeEditContactModal,
+        modalVisibility: modalVisibility,
     });
 
     return (
@@ -93,12 +94,12 @@ export function EditContactModal(props: editContactModalProps) {
                                         />
                                     )}
 
-                                    {contactInitialPhotoUrl &&
+                                    {contactInitialPhotoUrl !== null &&
                                         !contactAvatarImageInformation && (
                                             <img
                                                 className="w-8 h-8  rounded-md"
-                                                src={contact.photoUrl}
-                                                alt={contact.name}
+                                                src={contactInitialPhotoUrl}
+                                                alt={"imagem selecionada"}
                                             />
                                         )}
 

@@ -24,10 +24,11 @@ type editContactFormData = z.infer<typeof editContactSchema>;
 type useEditContactFormProps = {
     contact: CONTACT_DTO;
     successEditCallback?: () => void;
+    modalVisibility: boolean;
 };
 
 export function useEditContactForm(props: useEditContactFormProps) {
-    const { successEditCallback, contact } = props;
+    const { successEditCallback, contact, modalVisibility } = props;
 
     const editContactForm = useForm<editContactFormData>({
         resolver: zodResolver(editContactSchema),
@@ -78,10 +79,13 @@ export function useEditContactForm(props: useEditContactFormProps) {
                 });
             }
 
-            reset();
+            setContactInitialPhotoUrl(null);
             if (successEditCallback) {
                 successEditCallback();
             }
+
+            reset();
+
             successToastHandler({
                 title: "Contato editado com sucesso",
             });
@@ -98,14 +102,20 @@ export function useEditContactForm(props: useEditContactFormProps) {
         reset({ contactImageAvatar: null });
     }
 
+    console.log(contact);
     useEffect(() => {
-        if (!contact) return;
+        if (!contact || !modalVisibility) return;
         setValue("name", contact.name);
         setValue("cpf", contact.cpf);
         setValue("email", contact.email);
         setValue("phone", contact.phone);
-        setContactInitialPhotoUrl(contact?.photoUrl);
-    }, [contact, setValue]);
+
+        if (contact.hasPhoto === true) {
+            setContactInitialPhotoUrl(contact.photoUrl);
+        } else {
+            setContactInitialPhotoUrl(null);
+        }
+    }, [contact, setValue, modalVisibility]);
 
     return {
         handleEditContact,
