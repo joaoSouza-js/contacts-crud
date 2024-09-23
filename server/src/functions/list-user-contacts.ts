@@ -17,6 +17,7 @@ export async function listUserContacts(props: listUserContactsProps) {
             },
             name: {
                 contains: searchName.toLowerCase(),
+                mode: "insensitive",
             },
         },
         orderBy: {
