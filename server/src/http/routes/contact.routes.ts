@@ -1,128 +1,113 @@
-import z from "zod";
 import type { FastifyInstance } from "fastify";
-import { createNewContact } from "../../functions/create-new-contact";
-import { deleteUserContact } from "../../functions/delete-user-contact";
-import { updateUserContact } from "../../functions/update-user-contact";
-import { listUserContacts } from "../../functions/list-user-contacts";
-import { saveContactImage } from "../../functions/save-contact-image";
-import { BadRequest } from "../../.error/BadRequest";
-import { deleteContactImage } from "../../functions/delete-contact-image";
-
-const newContactBodySchema = z.object({
-    name: z.string(),
-    email: z.string().email("Email inválido"),
-    phone: z.string(),
-    cpf: z.coerce.string(),
-});
-
-const contactQueryParamsSchema = z.object({
-    contactId: z.string().uuid(),
-});
-
-const updateContactBodySchema = z.object({
-    name: z.string(),
-    email: z.string().email("Email inválido"),
-    phone: z.string(),
-    cpf: z.coerce.string(),
-});
-
-const userContactsQuerySchema = z.object({
-    limit: z.coerce.number().default(10),
-    page: z.coerce.number().default(1),
-    searchName: z.string().default(""),
-});
-
-const contactPhotoQueryParamsSchema = z.object({
-    contactId: z.string().uuid(),
-});
+import { createContactRestController } from "../controller/contact/create-contact";
+import { deleteContactRestController } from "../controller/contact/delete-contact";
+import { updateContactRestController } from "../controller/contact/update-contact";
+import { swaggerUpdateContactBodySchema } from "../validation/update-contact-body-schema";
+import { editContactPhotoRestController } from "../controller/contact/edit-contact-photo";
+import { deleteContactImageRestController } from "../controller/contact/delete-contact-image";
+import { swaggerContactRestControllerBodySchema } from "../validation/create-contact-body-schema";
+import { listContactsRestController } from "../controller/contact/list-contacts";
+import { swaggerContactsQueryParamsSchema } from "../validation/contact-list-query-params-schema";
+import { swaggerContactContactQueryParamsSchema } from "../validation/contact-query-params-schema";
 
 export async function contactRoutes(app: FastifyInstance) {
-    app.post("/contact", async (request, reply) => {
-        const contact = newContactBodySchema.parse(request.body);
-        const userId = request.user.sub;
+    app.post(
+        "/contact",
+        {
+            schema: {
+                tags: ["Contact"],
+                summary: "Create contact",
+                description: "route to create contact",
+                body: {
+                    type: "object",
+                    properties: swaggerContactRestControllerBodySchema,
+                },
+            },
+        },
+        createContactRestController
+    );
 
-        const { contactCreated } = await createNewContact({
-            name: contact.name,
-            email: contact.email,
-            phone: contact.phone,
-            photoUrl: null,
-            userId: userId,
-            cpf: contact.cpf,
-        });
+    app.delete(
+        "/contact/:contactId",
+        {
+            schema: {
+                tags: ["Contact"],
+                summary: "Delete contact",
+                description: "route to delete contact",
+                params: {
+                    type: "object",
+                    properties: swaggerContactContactQueryParamsSchema,
+                },
+            },
+        },
+        deleteContactRestController
+    );
 
-        return reply.status(201).send({
-            contact: contactCreated,
-        });
-    });
+    app.put(
+        "/contact/:contactId",
+        {
+            schema: {
+                tags: ["Contact"],
+                summary: "Update contact",
+                description: "route to update contact",
+                params: {
+                    type: "object",
+                    properties: swaggerContactContactQueryParamsSchema,
+                },
+                body: {
+                    type: "object",
+                    properties: swaggerUpdateContactBodySchema,
+                },
+            },
+        },
+        updateContactRestController
+    );
 
-    app.delete("/contact/:contactId", async (request, reply) => {
-        const { contactId } = contactQueryParamsSchema.parse(request.params);
-        const userId = request.user.sub;
-        await deleteUserContact({ contactId: contactId, userId: userId });
+    app.get(
+        "/contact",
+        {
+            schema: {
+                tags: ["Contact"],
+                summary: "List contacts",
+                description: "route to list contacts",
+                params: {
+                    type: "object",
+                    properties: swaggerContactsQueryParamsSchema,
+                },
+            },
+        },
+        listContactsRestController
+    );
 
-        reply.status(204).send(contactId);
-    });
+    app.patch(
+        "/contact/:contactId/photo",
+        {
+            schema: {
+                tags: ["Contact"],
+                summary: "Edit contact photo",
+                description: "route to edit contact photo",
+                params: {
+                    type: "object",
+                    properties: swaggerContactContactQueryParamsSchema,
+                },
+            },
+        },
+        editContactPhotoRestController
+    );
 
-    app.put("/contact/:contactId", async (request, reply) => {
-        const { contactId } = contactQueryParamsSchema.parse(request.params);
-
-        const contact = updateContactBodySchema.parse(request.body);
-        const userId = request.user.sub;
-
-        await updateUserContact({
-            contactId: contactId,
-            name: contact.name,
-            email: contact.email,
-            phone: contact.phone,
-            userId: userId,
-        });
-
-        reply.status(204);
-    });
-
-    app.get("/contact", async (request, reply) => {
-        const userId = request.user.sub;
-        const { limit, page, searchName } = userContactsQuerySchema.parse(
-            request.query
-        );
-        const { contacts } = await listUserContacts({
-            userId: userId,
-            limit,
-            page,
-            searchName,
-        });
-
-        return reply.status(200).send({ contacts });
-    });
-
-    app.patch("/contact/:contactId/photo", async (request, reply) => {
-        const { contactId } = contactPhotoQueryParamsSchema.parse(
-            request.params
-        );
-
-        const userId = request.user.sub;
-
-        const image = await request.file();
-
-        if (!image) {
-            throw new BadRequest("Imagem inválida");
-        }
-
-        const photoUrl = await saveContactImage({
-            contactId: contactId,
-            image,
-            userId: userId,
-        });
-
-        reply.send({
-            fileName: photoUrl,
-        });
-    });
-
-    app.delete("/contact/:contactId/photo", async (request, reply) => {
-        const { contactId } = contactQueryParamsSchema.parse(request.params);
-        const userId = request.user.sub;
-        await deleteContactImage({ contactId, userId });
-        reply.status(204);
-    });
+    app.delete(
+        "/contact/:contactId/photo",
+        {
+            schema: {
+                tags: ["Contact"],
+                summary: "Delete contact photo",
+                description: "route to delete contact photo",
+                params: {
+                    type: "object",
+                    properties: swaggerContactContactQueryParamsSchema,
+                },
+            },
+        },
+        deleteContactImageRestController
+    );
 }

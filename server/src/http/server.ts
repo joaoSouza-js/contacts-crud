@@ -6,6 +6,9 @@ import { routes } from "./routes";
 import fastifyJwt from "@fastify/jwt";
 import fastifyStatic from "@fastify/static";
 import { env } from "../env";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
+
 import { uploadsFolderPath } from "../utils/uploads-folder-path";
 
 const app = fastify({ logger: true });
@@ -13,6 +16,28 @@ const app = fastify({ logger: true });
 app.register(fastifyStatic, {
     root: uploadsFolderPath, // Path to your uploads folder
     prefix: "/uploads/",
+});
+
+app.register(fastifySwagger, {
+    swagger: {
+        info: {
+            title: "Contacts API",
+            description: "API to manage contacts",
+            version: "0.1.0",
+        },
+        // securityDefinitions: {
+        //     Bearer: {
+        //         type: "apiKey",
+        //         name: "Bearer",
+        //         in: "header",
+        //     },
+        // },
+        consumes: ["application/json"],
+        produces: ["application/json"],
+    },
+});
+app.register(fastifySwaggerUi, {
+    prefix: "/docs",
 });
 
 app.setErrorHandler(errorHandler);

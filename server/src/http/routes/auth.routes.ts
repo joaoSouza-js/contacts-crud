@@ -1,36 +1,39 @@
 import type { FastifyInstance } from "fastify";
-import z from "zod";
-import { confirmUserCredentials } from "../../functions/confirm-user-credential";
-import { createAccount } from "../../functions/create-account";
-
-const sigInBodySchema = z.object({
-    cpf: z.string(),
-    password: z.string(),
-});
-
-const signUpBodySchema = z.object({
-    cpf: z.string(),
-    password: z.string(),
-    name: z.string(),
-});
+import { signInRestController } from "../controller/auth/sign-in";
+import { swaggerSignInBodySchema } from "../validation/sign-in-body-schema";
+import { signUpRestController } from "../controller/auth/sign-up";
+import { swaggerSignUpBodySchema } from "../validation/sign-up-body-schema";
 
 export async function authRoutes(app: FastifyInstance) {
-    app.post("/sign-in", async (request, reply) => {
-        const { cpf, password } = sigInBodySchema.parse(request.body);
-        const { user } = await confirmUserCredentials({
-            cpf,
-            password,
-        });
-        const token = app.jwt.sign(
-            { name: user.name },
-            { sub: user.id, expiresIn: 60 * 60 * 2 }
-        ); // 2 hours
-        reply.status(201).send({ token, user });
-    });
+    app.post(
+        "/sign-in",
+        {
+            schema: {
+                tags: ["Auth"],
+                summary: "Authenticate a user",
+                description: "route to authenticate a user",
+                body: {
+                    type: "object",
+                    properties: swaggerSignInBodySchema,
+                },
+            },
+        },
+        async (request, reply) => signInRestController(request, reply, app)
+    );
 
-    app.post("/signup", async (request, reply) => {
-        const { cpf, password, name } = signUpBodySchema.parse(request.body);
-        await createAccount({ cpf, password, name });
-        reply.status(201);
-    });
+    app.post(
+        "/signup",
+        {
+            schema: {
+                tags: ["Auth"],
+                summary: "Create a new user",
+                description: "route to create a new user",
+                body: {
+                    type: "object",
+                    properties: swaggerSignUpBodySchema,
+                },
+            },
+        },
+        signUpRestController
+    );
 }
