@@ -239,7 +239,7 @@ diponível em  [localhost](http://localhost:3000/docs)
    - Para rodar o banco de dados PostgreSQL usando Docker, execute:
 
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 5. **Instalação de Dependências**:
