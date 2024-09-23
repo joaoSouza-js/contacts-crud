@@ -1,5 +1,11 @@
 # Contact CRUD
 
+
+
+https://github.com/user-attachments/assets/d61e038a-9c3c-4a8b-bc55-d9816335d328
+
+
+
 ## Visão Geral
 
 O Contact CRUD é uma aplicação full-stack projetada para gerenciar contatos de usuários de forma eficiente. O projeto é dividido em duas partes principais: o cliente e o servidor. O cliente é construído com React e Tailwind CSS, enquanto o servidor utiliza Fastify e Prisma com PostgreSQL para gerenciamento de dados. Este README fornece uma visão geral de ambas as partes da aplicação.
@@ -130,6 +136,10 @@ O servidor utiliza o suporte multipart do Fastify para gerenciar dados de formul
 ### Documentação da API
 
 O Swagger é integrado para documentar a API, facilitando a compreensão e o uso dos endpoints pelos desenvolvedores.
+
+diponível em  [localhost](http://localhost:3000/docs)
+
+![image](https://github.com/user-attachments/assets/a6b5d6d0-b2db-4684-9cbd-6e0de03d5ba4)
 
 ---
 
