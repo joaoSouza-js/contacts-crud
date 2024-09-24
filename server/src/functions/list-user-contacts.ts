@@ -36,7 +36,7 @@ export async function listUserContacts(props: listUserContactsProps) {
     });
 
     const contactFormatted = contacts.map((contact) => {
-        const contactHasPhoto = !!contact?.photoUrl;
+        const contactHasPhoto = contact.photoUrl != null;
         return { ...contact, hasPhoto: contactHasPhoto };
     });
 

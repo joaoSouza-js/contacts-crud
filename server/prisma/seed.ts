@@ -58,7 +58,6 @@ async function addUserContacts(userId: string) {
                     name: user.name,
                     email: user.email,
                     phone: user.phone,
-                    photoUrl: user.photoUrl,
                     cpf: cpf.digitsOnly,
                     user: {
                         connect: {

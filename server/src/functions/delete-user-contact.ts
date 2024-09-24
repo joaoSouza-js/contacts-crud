@@ -1,4 +1,5 @@
 import { prisma } from "../libs/prisma";
+import { deleteImage } from "../services/delete-image";
 import { checkUserHasAuthorizationInContact } from "./check-user-has-authorization-in-contact";
 
 type deleteUserContactProps = {
@@ -9,7 +10,7 @@ type deleteUserContactProps = {
 export async function deleteUserContact(props: deleteUserContactProps) {
     const { contactId, userId } = props;
 
-    await checkUserHasAuthorizationInContact({
+    const contact = await checkUserHasAuthorizationInContact({
         contactId,
         userId,
         useNotAuthorizedMessageError:
@@ -21,4 +22,9 @@ export async function deleteUserContact(props: deleteUserContactProps) {
             id: contactId,
         },
     });
+
+    if(contact.photoUrl) {
+        const fileName = contact.photoUrl.split("/").pop();
+        await deleteImage({ fileName });
+    }
 }
