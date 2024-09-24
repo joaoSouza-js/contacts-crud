@@ -102,20 +102,21 @@ export function useEditContactForm(props: useEditContactFormProps) {
         reset({ contactImageAvatar: null });
     }
 
-    console.log(contact);
     useEffect(() => {
         if (!contact || !modalVisibility) return;
+        reset();
+
         setValue("name", contact.name);
         setValue("cpf", contact.cpf);
         setValue("email", contact.email);
         setValue("phone", contact.phone);
 
-        if (contact.hasPhoto === true) {
+        if (contact.hasPhoto) {
             setContactInitialPhotoUrl(contact.photoUrl);
         } else {
             setContactInitialPhotoUrl(null);
         }
-    }, [contact, setValue, modalVisibility]);
+    }, [contact, setValue, modalVisibility, reset]);
 
     return {
         handleEditContact,

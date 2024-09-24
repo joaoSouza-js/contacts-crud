@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "./ui/button";
 import {
     Dialog,
@@ -9,6 +8,8 @@ import {
 import { Input } from "./ui/input";
 import { useEditContactForm } from "@/hooks/pages/home/use-edit-contact-form";
 import { XIcon } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { generateRandomColor } from "@/utils/generate-random-color";
 
 type editContactModalProps = {
     modalVisibility: boolean;
@@ -82,7 +83,7 @@ export function EditContactModal(props: editContactModalProps) {
                                     htmlFor="create-contact-form-avatar"
                                     className="flex flex-1 items-center gap-3"
                                 >
-                                    {contactAvatarImageInformation && (
+                                    {contactAvatarImageInformation?.name && (
                                         <img
                                             className="w-8 h-8  rounded-md"
                                             src={
@@ -96,14 +97,28 @@ export function EditContactModal(props: editContactModalProps) {
 
                                     {contactInitialPhotoUrl !== null &&
                                         !contactAvatarImageInformation && (
-                                            <img
-                                                className="w-8 h-8  rounded-md"
-                                                src={contactInitialPhotoUrl}
-                                                alt={"imagem selecionada"}
-                                            />
+                                            <Avatar className="w-8 h-8  rounded-md">
+                                                <AvatarImage
+                                                    src={contactInitialPhotoUrl}
+                                                    alt={"imagem selecionada"}
+                                                />
+                                                <AvatarFallback
+                                                    style={{
+                                                        background:
+                                                            generateRandomColor(),
+                                                    }}
+                                                >
+                                                    <span className="text-secondary font-bold uppercase">
+                                                        {contact.name.slice(
+                                                            0,
+                                                            2
+                                                        )}
+                                                    </span>
+                                                </AvatarFallback>
+                                            </Avatar>
                                         )}
 
-                                    <span className="flex flex-1">
+                                    <span className="flex flex-1 text-xs">
                                         {contactAvatarImageInformation?.name ??
                                             "Selecione uma iamgem"}
                                     </span>
