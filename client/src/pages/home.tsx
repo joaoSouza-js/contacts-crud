@@ -61,7 +61,7 @@ export function Home() {
             {isContactNotFound && <ContactNotFoundContact />}
 
             {contacts.length > 0 && (
-                <main className="gap-6 mt-7 grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4 justify-center ">
+                <main className="gap-6 mt-7 grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4  ">
                     {contacts.map((contact) => (
                         <ContactCard
                             openDeleteContactModal={openDeleteContactModal}

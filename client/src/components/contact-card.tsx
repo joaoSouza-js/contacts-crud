@@ -30,7 +30,14 @@ export default function ContactCard(props: contactCardProps) {
             />
 
             <div className="flex items-center mt-4 flex-col">
-                <strong className="text-lg font-bold">{contact.name}</strong>
+                <strong
+                    style={{
+                        wordBreak: "break-word",
+                    }}
+                    className="text-lg font-bold"
+                >
+                    {contact.name}
+                </strong>
             </div>
 
             <div className="flex-col flex gap-3 mt-4">
