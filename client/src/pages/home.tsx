@@ -2,7 +2,7 @@ import { ContactList } from "@/components/contact-list";
 import { ContactSearch } from "@/components/contact-search";
 
 export function Home() {
-    
+
 
     return (
         <div className="px-5 pb-6 pt-8 flex flex-col min-h-screen ">

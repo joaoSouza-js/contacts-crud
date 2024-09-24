@@ -13,9 +13,9 @@ const editContactSchema = z.object({
     cpf: z
         .string({ required_error: "CPF obrigatório" })
         .min(11, "CPF Imcompleto"),
-    name: z.string({ required_error: "Nome obrigatório" }),
-    email: z.string({ required_error: "Email obrigatório" }),
-    phone: z.string({ required_error: "Telefone obrigatório" }),
+    name: z.string({ required_error: "Nome obrigatório" }).min(3, "Nome deve ter pelo menos 3 caracteres"),
+    email: z.string({ required_error: "Email obrigatório" }).email("Email inválido"),
+    phone: z.string({ required_error: "Telefone obrigatório" }).min(4, "Este telefone não existe"),
     contactImageAvatar: z.custom<FileList>().optional(),
 });
 
